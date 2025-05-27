@@ -2,6 +2,12 @@
 
 Een website gemaakt met Laravel 12 voor het vak Backend Web.
 
+## Vereisten
+- PHP 8.2 of hoger
+- Composer
+- MySQL
+- Node.js en NPM
+
 ## GitHub Repository
 [Link naar mijn GitHub repository](https://github.com/MatteoDia/backend-project.git)
 
