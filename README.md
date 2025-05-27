@@ -2,6 +2,9 @@
 
 Een website gemaakt met Laravel 12 voor het vak Backend Web.
 
+## GitHub Repository
+[Link naar mijn GitHub repository](https://github.com/MatteoDia/backend-project.git)
+
 ## Wat kan je doen op de website?
 
 ### Gebruikers
