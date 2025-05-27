@@ -19,12 +19,8 @@ class NewsController extends Controller
 
     public function index()
     {
-        $newsItems = NewsItem::with('author')
-            ->where('is_published', true)
-            ->orderBy('published_at', 'desc')
-            ->paginate(9);
-
-        return view('news.index', compact('newsItems'));
+        $news = NewsItem::latest()->paginate(10);
+        return view('news.index', compact('news'));
     }
 
     public function adminIndex()
@@ -38,10 +34,6 @@ class NewsController extends Controller
 
     public function show(NewsItem $newsItem)
     {
-        if (!$newsItem->is_published && !auth()->user()?->isAdmin()) {
-            abort(404);
-        }
-
         return view('news.show', compact('newsItem'));
     }
 

@@ -31,43 +31,17 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(Request $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = $request->user();
-        
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$user->id],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'birthday' => ['nullable', 'date'],
-            'about_me' => ['nullable', 'string', 'max:1000'],
-            'profile_photo' => ['nullable', 'image', 'max:2048'],
-        ]);
+        $request->user()->fill($request->validated());
 
-        if ($request->hasFile('profile_photo')) {
-            // Delete old photo if exists
-            if ($user->profile_photo) {
-                Storage::disk('public')->delete('profile-photos/' . $user->profile_photo);
-            }
-
-            // Store new photo
-            $file = $request->file('profile_photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('profile-photos', $filename, 'public');
-            $validated['profile_photo'] = $filename;
+        if ($request->user()->isDirty('email')) {
+            $request->user()->email_verified_at = null;
         }
 
-        $user->fill($validated);
+        $request->user()->save();
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
-        $user->save();
-
-        return Redirect::route('profile.edit')
-            ->with('status', 'profile-updated')
-            ->with('success', 'Profile updated successfully.');
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**

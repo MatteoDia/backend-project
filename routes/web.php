@@ -6,20 +6,29 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FaqCategoryController;
 use App\Http\Controllers\FaqItemController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\FaqController as AdminFaqController;
+use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// News routes
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
-Route::get('/news/{news}', [NewsController::class, 'show'])->name('news.show');
+Route::get('/news/{newsItem}', [NewsController::class, 'show'])->name('news.show');
 
+// FAQ routes
 Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
 
+// Contact routes
 Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
@@ -40,18 +49,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     })->name('dashboard');
 
     // User management
-    Route::resource('users', AdminUserController::class);
+    Route::resource('users', UserController::class);
 
     // News management
     Route::resource('news', AdminNewsController::class);
 
     // FAQ management
-    Route::resource('faq/categories', FaqCategoryController::class);
-    Route::resource('faq/items', FaqItemController::class);
+    Route::resource('faq/categories', AdminFaqController::class);
+    Route::resource('faq/items', AdminFaqController::class);
 
     // Contact messages
-    Route::get('/contact', [Admin\ContactController::class, 'index'])->name('contact.index');
-    Route::delete('/contact/{message}', [Admin\ContactController::class, 'destroy'])->name('contact.destroy');
+    Route::get('/contact', [AdminContactController::class, 'index'])->name('contact.index');
+    Route::delete('/contact/{message}', [AdminContactController::class, 'destroy'])->name('contact.destroy');
 });
 
 // Public Profile Routes
